@@ -3,6 +3,8 @@ package com.hagag.LoanManagementSystem.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 public class Loan {
@@ -13,9 +15,13 @@ public class Loan {
     private Integer id;
     private double amount;
     private int durationMonths;
-    private Status status;
-    private String createdAt;
 
-    @OneToMany
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }
