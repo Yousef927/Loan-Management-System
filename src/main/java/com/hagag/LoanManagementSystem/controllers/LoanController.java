@@ -17,11 +17,6 @@ public class LoanController {
     @Autowired
     LoanServices loanServices;
 
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/swagger-ui/index.html";
-    }
-
     @PostMapping("/apply")
     public ResponseEntity<LoanResponseDTO> applyLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
 
