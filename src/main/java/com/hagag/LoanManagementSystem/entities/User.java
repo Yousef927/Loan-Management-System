@@ -20,6 +20,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Loan> loans;
+//    @OneToMany(mappedBy = "user")
+//    private List<Loan> loans;
 }
