@@ -6,10 +6,7 @@ import com.hagag.LoanManagementSystem.services.LoanServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class LoanController {
@@ -21,8 +18,18 @@ public class LoanController {
     public ResponseEntity<LoanResponseDTO> applyLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
 
         return loanServices.applyLoan(loanRequestDTO);
-
     }
+
+    @PostMapping("/approve/{loanId}")
+    public ResponseEntity<String> approveLoan(@PathVariable Integer loanId) {
+        return loanServices.approveLoan(loanId);
+    }
+
+    @PostMapping("/reject/{loanId}")
+    public ResponseEntity<String> rejectLoan(@PathVariable Integer loanId) {
+        return loanServices.rejectLoan(loanId);
+    }
+
 
 
 }
