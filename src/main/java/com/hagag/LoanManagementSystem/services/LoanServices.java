@@ -5,6 +5,7 @@ import com.hagag.LoanManagementSystem.DTOs.LoanResponseDTO;
 import com.hagag.LoanManagementSystem.daos.LoanRepository;
 import com.hagag.LoanManagementSystem.daos.UserRepository;
 import com.hagag.LoanManagementSystem.entities.Loan;
+import com.hagag.LoanManagementSystem.entities.Role;
 import com.hagag.LoanManagementSystem.entities.Status;
 import com.hagag.LoanManagementSystem.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,4 +46,57 @@ public class LoanServices {
 
         return new ResponseEntity<>(responseDTO , HttpStatus.CREATED);
     }
+
+    public ResponseEntity<String> approveLoan(Integer loanId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        User user = userRepository.findByEmail(email);
+        if(user == null ) {
+            throw new RuntimeException("User not found");
+        }
+        if(user.getRole() != Role.LOAN_OFFICER) {
+            return new ResponseEntity<>("Unauthorized" , HttpStatus.FORBIDDEN);
+        }
+
+        Loan loan = loanRepository.findById(loanId).orElse(null);
+        if(loan == null) {
+            throw new RuntimeException("Loan not found");
+        }
+        if(loan.getStatus() != Status.PENDING) {
+            throw new RuntimeException("Loan is not pending");
+        }
+        loan.setStatus(Status.APPROVED);
+        Loan savedLoan = loanRepository.save(loan);
+
+        return new ResponseEntity<>("Loan approved successfully" , HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<String> rejectLoan(Integer loanId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        User user = userRepository.findByEmail(email);
+        if(user == null ) {
+            throw new RuntimeException("User not found");
+        }
+        if(user.getRole() != Role.LOAN_OFFICER) {
+            return new ResponseEntity<>("Unauthorized" , HttpStatus.FORBIDDEN);
+        }
+
+        Loan loan = loanRepository.findById(loanId).orElse(null);
+        if(loan == null) {
+            throw new RuntimeException("Loan not found");
+        }
+        if(loan.getStatus() != Status.PENDING) {
+            throw new RuntimeException("Loan is not pending");
+        }
+        loan.setStatus(Status.REJECTED);
+        Loan savedLoan = loanRepository.save(loan);
+
+        return new ResponseEntity<>("Loan rejected successfully" , HttpStatus.OK);
+
+    }
+
 }
