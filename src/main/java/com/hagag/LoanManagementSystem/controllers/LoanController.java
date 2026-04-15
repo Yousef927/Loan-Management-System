@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class LoanController {
 
@@ -28,6 +30,10 @@ public class LoanController {
     @PostMapping("/reject/{loanId}")
     public ResponseEntity<String> rejectLoan(@PathVariable Integer loanId) {
         return loanServices.rejectLoan(loanId);
+    }
+    @GetMapping("/myloans")
+    public ResponseEntity<List<LoanResponseDTO>> getMyLoans() {
+        return loanServices.getMyLoans();
     }
 
 
