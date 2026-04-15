@@ -16,6 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LoanServices {
@@ -99,4 +102,19 @@ public class LoanServices {
 
     }
 
+    public ResponseEntity<List<LoanResponseDTO>> getMyLoans() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        List<Loan> loans = loanRepository.findByUser(user);
+        List<LoanResponseDTO> responseDTO = new ArrayList<>();
+        for (Loan loan : loans) {
+            LoanResponseDTO dto = LoanResponseDTO.buildResponseFromLoan(loan);
+            responseDTO.add(dto);
+        }
+        return new ResponseEntity<>(responseDTO , HttpStatus.OK);
+    }
 }
