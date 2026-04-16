@@ -28,12 +28,8 @@ public class SecurityConfig {
                         .requestMatchers("/register" ).permitAll()
                         .anyRequest()
                         .authenticated())
-                .formLogin(Customizer.withDefaults())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
-                        .permitAll()
-                )
+                .httpBasic(Customizer.withDefaults())
+
                 .build();
     }
 
