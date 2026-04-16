@@ -117,4 +117,25 @@ public class LoanServices {
         }
         return new ResponseEntity<>(responseDTO , HttpStatus.OK);
     }
+
+    public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        Optional<Loan> loans = loanRepository.findById(loanId);
+        if (loans.isEmpty()) {
+            throw new RuntimeException("Loan not found");
+        }
+        Loan loan = loans.get();
+        if (user.getRole() == Role.USER)
+            if (loan.getUser().getId() != user.getId()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
+        LoanResponseDTO loanResponseDTO = LoanResponseDTO.buildResponseFromLoan(loan);
+        return new ResponseEntity<>(loanResponseDTO , HttpStatus.OK);
+
+    }
 }
