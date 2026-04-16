@@ -35,6 +35,10 @@ public class LoanController {
     public ResponseEntity<List<LoanResponseDTO>> getMyLoans() {
         return loanServices.getMyLoans();
     }
+    @GetMapping("/loan/{loanId}")
+    public ResponseEntity<LoanResponseDTO> getLoan(@PathVariable Integer loanId) {
+        return loanServices.getLoan(loanId);
+    }
 
 
 
