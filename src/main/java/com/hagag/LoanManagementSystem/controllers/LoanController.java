@@ -32,13 +32,14 @@ public class LoanController {
         return loanServices.rejectLoan(loanId);
     }
     @GetMapping("/myloans")
-    public ResponseEntity<List<LoanResponseDTO>> getMyLoans() {
-        return loanServices.getMyLoans();
+    public ResponseEntity<List<LoanResponseDTO>> getMyLoans(@RequestParam(required = false) String status) {
+        return loanServices.getMyLoans(status);
     }
     @GetMapping("/loan/{loanId}")
     public ResponseEntity<LoanResponseDTO> getLoan(@PathVariable Integer loanId) {
         return loanServices.getLoan(loanId);
     }
+
 
 
 
