@@ -1,6 +1,7 @@
 package com.hagag.LoanManagementSystem.daos;
 
 import com.hagag.LoanManagementSystem.entities.Loan;
+import com.hagag.LoanManagementSystem.entities.Status;
 import com.hagag.LoanManagementSystem.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,4 +12,7 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
 
 
     List<Loan> findByUser(User user);
+
+
+    List<Loan> findByUserAndStatus(User user , Status status);
 }
