@@ -72,7 +72,7 @@ public class LoanServices {
         loan.setStatus(Status.APPROVED);
         Loan savedLoan = loanRepository.save(loan);
 
-        return new ResponseEntity<>("Loan approved successfully" , HttpStatus.OK);
+        return ResponseEntity.ok("Loan approved successfully");
 
     }
 
@@ -98,24 +98,40 @@ public class LoanServices {
         loan.setStatus(Status.REJECTED);
         Loan savedLoan = loanRepository.save(loan);
 
-        return new ResponseEntity<>("Loan rejected successfully" , HttpStatus.OK);
+        return ResponseEntity.ok("Loan rejected successfully");
 
     }
 
-    public ResponseEntity<List<LoanResponseDTO>> getMyLoans() {
+    public ResponseEntity<List<LoanResponseDTO>> getMyLoans(String status) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
         User user = userRepository.findByEmail(email);
+        List<LoanResponseDTO> responseDTO = new ArrayList<>();
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-        List<Loan> loans = loanRepository.findByUser(user);
-        List<LoanResponseDTO> responseDTO = new ArrayList<>();
-        for (Loan loan : loans) {
+        if(status == null || status.isBlank()) {
+            List<Loan> loans = loanRepository.findByUser(user);
+            for (Loan loan : loans) {
+                LoanResponseDTO dto = LoanResponseDTO.buildResponseFromLoan(loan);
+                responseDTO.add(dto);
+            }
+            return ResponseEntity.ok(responseDTO);
+        }
+        Status statusEnum;
+        try {
+            statusEnum = Status.valueOf(status.toUpperCase().trim());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid status. Allowed values: PENDING, APPROVED, REJECTED");
+        }
+
+        List<Loan> loans = loanRepository.findByUserAndStatus(user , statusEnum);
+
+        for(Loan loan : loans) {
             LoanResponseDTO dto = LoanResponseDTO.buildResponseFromLoan(loan);
             responseDTO.add(dto);
         }
-        return new ResponseEntity<>(responseDTO , HttpStatus.OK);
+        return ResponseEntity.ok(responseDTO);
     }
 
     public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
@@ -135,7 +151,8 @@ public class LoanServices {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
             }
         LoanResponseDTO loanResponseDTO = LoanResponseDTO.buildResponseFromLoan(loan);
-        return new ResponseEntity<>(loanResponseDTO , HttpStatus.OK);
+        return ResponseEntity.ok(loanResponseDTO);
 
     }
+
 }
