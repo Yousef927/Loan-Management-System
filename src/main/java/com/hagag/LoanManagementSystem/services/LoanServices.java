@@ -8,6 +8,10 @@ import com.hagag.LoanManagementSystem.entities.Loan;
 import com.hagag.LoanManagementSystem.entities.Role;
 import com.hagag.LoanManagementSystem.entities.Status;
 import com.hagag.LoanManagementSystem.entities.User;
+import com.hagag.LoanManagementSystem.exception.InvalidInput;
+import com.hagag.LoanManagementSystem.exception.LoanNotFound;
+import com.hagag.LoanManagementSystem.exception.Unauthorized;
+import com.hagag.LoanManagementSystem.exception.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +35,7 @@ public class LoanServices {
 
 
     public ResponseEntity<LoanResponseDTO> applyLoan(LoanRequestDTO loanRequestDTO) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        User user = userRepository.findByEmail(email);
+        User user = getCurrentUser();
 
         Loan loan = new Loan();
         loan.setAmount(loanRequestDTO.getAmount());
@@ -51,20 +52,17 @@ public class LoanServices {
     }
 
     public ResponseEntity<String> approveLoan(Integer loanId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        User user = userRepository.findByEmail(email);
+        User user = getCurrentUser();
         if(user == null ) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFound("User not found");
         }
         if(user.getRole() != Role.LOAN_OFFICER) {
-            return new ResponseEntity<>("Unauthorized" , HttpStatus.FORBIDDEN);
+            throw new Unauthorized("Unauthorized Access");
         }
 
         Loan loan = loanRepository.findById(loanId).orElse(null);
         if(loan == null) {
-            throw new RuntimeException("Loan not found");
+            throw new LoanNotFound("Loan not found");
         }
         if(loan.getStatus() != Status.PENDING) {
             throw new RuntimeException("Loan is not pending");
@@ -77,20 +75,17 @@ public class LoanServices {
     }
 
     public ResponseEntity<String> rejectLoan(Integer loanId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-
-        User user = userRepository.findByEmail(email);
+        User user = getCurrentUser();
         if(user == null ) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFound("User not found");
         }
         if(user.getRole() != Role.LOAN_OFFICER) {
-            return new ResponseEntity<>("Unauthorized" , HttpStatus.FORBIDDEN);
+            throw new Unauthorized("Unauthorized Access");
         }
 
         Loan loan = loanRepository.findById(loanId).orElse(null);
         if(loan == null) {
-            throw new RuntimeException("Loan not found");
+            throw new LoanNotFound("Loan not found");
         }
         if(loan.getStatus() != Status.PENDING) {
             throw new RuntimeException("Loan is not pending");
@@ -103,12 +98,10 @@ public class LoanServices {
     }
 
     public ResponseEntity<List<LoanResponseDTO>> getMyLoans(String status) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        User user = userRepository.findByEmail(email);
+        User user = getCurrentUser();
         List<LoanResponseDTO> responseDTO = new ArrayList<>();
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFound("User not found");
         }
         if(status == null || status.isBlank()) {
             List<Loan> loans = loanRepository.findByUser(user);
@@ -122,7 +115,7 @@ public class LoanServices {
         try {
             statusEnum = Status.valueOf(status.toUpperCase().trim());
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid status. Allowed values: PENDING, APPROVED, REJECTED");
+            throw new InvalidInput("Invalid status. Allowed values: PENDING, APPROVED, REJECTED");
         }
 
         List<Loan> loans = loanRepository.findByUserAndStatus(user , statusEnum);
@@ -135,24 +128,31 @@ public class LoanServices {
     }
 
     public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        User user = userRepository.findByEmail(email);
+        User user = getCurrentUser();
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFound("User not found");
         }
         Optional<Loan> loans = loanRepository.findById(loanId);
         if (loans.isEmpty()) {
-            throw new RuntimeException("Loan not found");
+            throw new LoanNotFound("Loan not found");
         }
         Loan loan = loans.get();
         if (user.getRole() == Role.USER)
             if (loan.getUser().getId() != user.getId()) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+                throw new Unauthorized("Unauthorized Access");
             }
         LoanResponseDTO loanResponseDTO = LoanResponseDTO.buildResponseFromLoan(loan);
         return ResponseEntity.ok(loanResponseDTO);
+    }
 
+    public User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+        User user = userRepository.findByEmail(email);
+        if (user == null ) {
+            throw new UserNotFound("User not found");
+        }
+        return user;
     }
 
 }
