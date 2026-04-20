@@ -25,4 +25,15 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.buildErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
         return new ResponseEntity<>(errorResponse , HttpStatus.FORBIDDEN);
     }
+    @ExceptionHandler(LoanAlreadyApproved.class)
+    public ResponseEntity<ErrorResponse> handleLoanAlreadyApproved(LoanAlreadyApproved ex) {
+        ErrorResponse errorResponse = ErrorResponse.buildErrorResponse(ex.getMessage() , HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse , HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(LoanAlreadyRejected.class)
+    public ResponseEntity<ErrorResponse> handleLoanAlreadyRejected(LoanAlreadyRejected ex) {
+        ErrorResponse errorResponse = ErrorResponse.buildErrorResponse(ex.getMessage() , HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse , HttpStatus.BAD_REQUEST);
+}
+
 }
