@@ -8,10 +8,7 @@ import com.hagag.LoanManagementSystem.entities.Loan;
 import com.hagag.LoanManagementSystem.entities.Role;
 import com.hagag.LoanManagementSystem.entities.Status;
 import com.hagag.LoanManagementSystem.entities.User;
-import com.hagag.LoanManagementSystem.exception.InvalidInput;
-import com.hagag.LoanManagementSystem.exception.LoanNotFound;
-import com.hagag.LoanManagementSystem.exception.Unauthorized;
-import com.hagag.LoanManagementSystem.exception.UserNotFound;
+import com.hagag.LoanManagementSystem.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,19 +50,16 @@ public class LoanServices {
 
     public ResponseEntity<String> approveLoan(Integer loanId) {
         User user = getCurrentUser();
-        if(user == null ) {
-            throw new UserNotFound("User not found");
-        }
+
         if(user.getRole() != Role.LOAN_OFFICER) {
             throw new Unauthorized("Unauthorized Access");
         }
 
-        Loan loan = loanRepository.findById(loanId).orElse(null);
-        if(loan == null) {
-            throw new LoanNotFound("Loan not found");
-        }
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFound("Loan not found"));
+
         if(loan.getStatus() != Status.PENDING) {
-            throw new RuntimeException("Loan is not pending");
+            throw new LoanAlreadyApproved("Loan is Already " + loan.getStatus());
         }
         loan.setStatus(Status.APPROVED);
         Loan savedLoan = loanRepository.save(loan);
@@ -76,19 +70,16 @@ public class LoanServices {
 
     public ResponseEntity<String> rejectLoan(Integer loanId) {
         User user = getCurrentUser();
-        if(user == null ) {
-            throw new UserNotFound("User not found");
-        }
+
         if(user.getRole() != Role.LOAN_OFFICER) {
             throw new Unauthorized("Unauthorized Access");
         }
 
-        Loan loan = loanRepository.findById(loanId).orElse(null);
-        if(loan == null) {
-            throw new LoanNotFound("Loan not found");
-        }
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFound("Loan not found"));
+
         if(loan.getStatus() != Status.PENDING) {
-            throw new RuntimeException("Loan is not pending");
+            throw new LoanAlreadyRejected("Loan is Already " + loan.getStatus());
         }
         loan.setStatus(Status.REJECTED);
         Loan savedLoan = loanRepository.save(loan);
@@ -99,10 +90,9 @@ public class LoanServices {
 
     public ResponseEntity<List<LoanResponseDTO>> getMyLoans(String status) {
         User user = getCurrentUser();
+
         List<LoanResponseDTO> responseDTO = new ArrayList<>();
-        if (user == null) {
-            throw new UserNotFound("User not found");
-        }
+
         if(status == null || status.isBlank()) {
             List<Loan> loans = loanRepository.findByUser(user);
             for (Loan loan : loans) {
@@ -129,14 +119,10 @@ public class LoanServices {
 
     public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
         User user = getCurrentUser();
-        if (user == null) {
-            throw new UserNotFound("User not found");
-        }
-        Optional<Loan> loans = loanRepository.findById(loanId);
-        if (loans.isEmpty()) {
-            throw new LoanNotFound("Loan not found");
-        }
-        Loan loan = loans.get();
+
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFound("Loan not found"));
+
         if (user.getRole() == Role.USER)
             if (loan.getUser().getId() != user.getId()) {
                 throw new Unauthorized("Unauthorized Access");
