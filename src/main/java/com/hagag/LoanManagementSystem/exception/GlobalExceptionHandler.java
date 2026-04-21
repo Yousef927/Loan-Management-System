@@ -20,8 +20,8 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.buildErrorResponse(ex.getMessage() , HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse , HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(Unauthorized.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorization(Unauthorized ex){
+    @ExceptionHandler(Forbidden.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorization(Forbidden ex){
         ErrorResponse errorResponse = ErrorResponse.buildErrorResponse(ex.getMessage(), HttpStatus.FORBIDDEN);
         return new ResponseEntity<>(errorResponse , HttpStatus.FORBIDDEN);
     }
