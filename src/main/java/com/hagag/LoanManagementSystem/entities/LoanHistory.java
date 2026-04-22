@@ -13,7 +13,7 @@ public class LoanHistory {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    private Status action;
+    private Action action;
 
 
     private String actedBy;
@@ -22,7 +22,7 @@ public class LoanHistory {
     @ManyToOne
     private Loan loan;
 
-    public static LoanHistory buildLoanHistory(Loan loan, Status action, String actedBy) {
+    public static LoanHistory buildLoanHistory(Loan loan, Action action, String actedBy) {
         LoanHistory history = new LoanHistory();
         history.setLoan(loan);
         history.setAction(action);
