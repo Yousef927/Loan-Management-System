@@ -44,7 +44,7 @@ public class LoanServices {
         loan.setUser(user);
 
         Loan savedLoan = loanRepository.save(loan);
-        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, savedLoan.getStatus() , savedLoan.getUser().getEmail());
+        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPLIED , savedLoan.getUser().getEmail());
         loanHistoryRepository.save(history);
 
         LoanResponseDTO responseDTO = LoanResponseDTO.buildResponseFromLoan(loan);
@@ -68,7 +68,7 @@ public class LoanServices {
         loan.setStatus(Status.APPROVED);
 
         Loan savedLoan = loanRepository.save(loan);
-        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, savedLoan.getStatus() , savedLoan.getUser().getEmail());
+        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPROVE , savedLoan.getUser().getEmail());
         loanHistoryRepository.save(history);
         return ResponseEntity.ok("Loan approved successfully");
 
@@ -89,7 +89,7 @@ public class LoanServices {
         }
         loan.setStatus(Status.REJECTED);
         Loan savedLoan = loanRepository.save(loan);
-        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, savedLoan.getStatus() , savedLoan.getUser().getEmail());
+        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPROVE , savedLoan.getUser().getEmail());
         loanHistoryRepository.save(history);
 
         return ResponseEntity.ok("Loan rejected successfully");
@@ -125,6 +125,7 @@ public class LoanServices {
         return ResponseEntity.ok(responseDTO);
     }
 
+
     public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
         User user = getCurrentUser();
 
@@ -132,7 +133,7 @@ public class LoanServices {
                 .orElseThrow(() -> new LoanNotFound("Loan not found"));
 
         if (user.getRole() == Role.USER)
-            if (loan.getUser().getId() != user.getId()) {
+            if (!loan.getUser().getId().equals(user.getId())) {
                 throw new Forbidden("Unauthorized Access");
             }
         LoanResponseDTO loanResponseDTO = LoanResponseDTO.buildResponseFromLoan(loan);
