@@ -19,7 +19,7 @@ public class LoanHistory {
     private String actedBy;
     private LocalDateTime actedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Loan loan;
 
     public static LoanHistory buildLoanHistory(Loan loan, Action action, String actedBy) {
