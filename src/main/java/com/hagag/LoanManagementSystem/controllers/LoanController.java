@@ -1,5 +1,6 @@
 package com.hagag.LoanManagementSystem.controllers;
 
+import com.hagag.LoanManagementSystem.DTOs.LoanHistoryResponseDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanResponseDTO;
 import com.hagag.LoanManagementSystem.services.LoanServices;
@@ -40,6 +41,11 @@ public class LoanController {
     public ResponseEntity<LoanResponseDTO> getLoan(@PathVariable Integer loanId) {
         return loanServices.getLoan(loanId);
     }
+    @GetMapping("loan{loanId}/history")
+    public ResponseEntity<List<LoanHistoryResponseDTO>> getLoanHistory(@PathVariable Integer loanId) {
+        return loanServices.getLoanHistory(loanId);
+    }
+
 
 
 
