@@ -41,7 +41,7 @@ public class LoanController {
     public ResponseEntity<LoanResponseDTO> getLoan(@PathVariable Integer loanId) {
         return loanServices.getLoan(loanId);
     }
-    @GetMapping("loan{loanId}/history")
+    @GetMapping("loan/{loanId}/history")
     public ResponseEntity<List<LoanHistoryResponseDTO>> getLoanHistory(@PathVariable Integer loanId) {
         return loanServices.getLoanHistory(loanId);
     }
