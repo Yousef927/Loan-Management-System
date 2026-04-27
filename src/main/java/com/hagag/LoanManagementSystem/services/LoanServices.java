@@ -1,5 +1,6 @@
 package com.hagag.LoanManagementSystem.services;
 
+import com.hagag.LoanManagementSystem.DTOs.LoanHistoryResponseDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanResponseDTO;
 import com.hagag.LoanManagementSystem.daos.LoanHistoryRepository;
@@ -44,7 +45,7 @@ public class LoanServices {
         loan.setUser(user);
 
         Loan savedLoan = loanRepository.save(loan);
-        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPLIED , savedLoan.getUser().getEmail());
+        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPLIED , user.getEmail());
         loanHistoryRepository.save(history);
 
         LoanResponseDTO responseDTO = LoanResponseDTO.buildResponseFromLoan(loan);
@@ -68,7 +69,7 @@ public class LoanServices {
         loan.setStatus(Status.APPROVED);
 
         Loan savedLoan = loanRepository.save(loan);
-        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPROVE , savedLoan.getUser().getEmail());
+        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPROVE , user.getEmail());
         loanHistoryRepository.save(history);
         return ResponseEntity.ok("Loan approved successfully");
 
@@ -89,7 +90,7 @@ public class LoanServices {
         }
         loan.setStatus(Status.REJECTED);
         Loan savedLoan = loanRepository.save(loan);
-        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.APPROVE , savedLoan.getUser().getEmail());
+        LoanHistory history = LoanHistory.buildLoanHistory(savedLoan, Action.REJECT , user.getEmail());
         loanHistoryRepository.save(history);
 
         return ResponseEntity.ok("Loan rejected successfully");
@@ -132,12 +133,31 @@ public class LoanServices {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new LoanNotFound("Loan not found"));
 
-        if (user.getRole() == Role.USER)
+        if (user.getRole() == Role.USER) {
             if (!loan.getUser().getId().equals(user.getId())) {
                 throw new Forbidden("Unauthorized Access");
             }
+        }
         LoanResponseDTO loanResponseDTO = LoanResponseDTO.buildResponseFromLoan(loan);
         return ResponseEntity.ok(loanResponseDTO);
+    }
+
+    public ResponseEntity<List<LoanHistoryResponseDTO>> getLoanHistory(Integer loanId) {
+        User user = getCurrentUser();
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFound("Loan not found"));
+        if (user.getRole() == Role.USER) {
+            if (!loan.getUser().getId().equals(user.getId())) {
+                throw new Forbidden("Unauthorized Access");
+            }
+        }
+        List<LoanHistoryResponseDTO> responseDTO = new ArrayList<>();
+        List<LoanHistory> loanHistories = loanHistoryRepository.findByLoanId(loanId);
+        for (LoanHistory loanHistory : loanHistories) {
+            LoanHistoryResponseDTO dto = LoanHistoryResponseDTO.buildResponseFromHistory(loanHistory);
+            responseDTO.add(dto);
+        }
+        return ResponseEntity.ok(responseDTO);
     }
 
     public User getCurrentUser() {
@@ -149,5 +169,4 @@ public class LoanServices {
         }
         return user;
     }
-
 }
