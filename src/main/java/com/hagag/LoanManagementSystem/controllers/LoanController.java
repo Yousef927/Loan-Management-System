@@ -34,8 +34,10 @@ public class LoanController {
         return loanServices.rejectLoan(loanId);
     }
     @GetMapping("/myloans")
-    public ResponseEntity<List<LoanResponseDTO>> getMyLoans(@RequestParam(required = false) String status) {
-        return loanServices.getMyLoans(status);
+    public ResponseEntity<List<LoanResponseDTO>> getMyLoans(@RequestParam(required = false) String status ,
+                                                            @RequestParam(defaultValue = "0") Integer page ,
+                                                            @RequestParam(defaultValue = "5") Integer size) {
+        return loanServices.getMyLoans(status , page , size);
     }
     @GetMapping("/loan/{loanId}")
     public ResponseEntity<LoanResponseDTO> getLoan(@PathVariable Integer loanId) {
