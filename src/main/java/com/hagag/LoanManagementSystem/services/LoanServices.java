@@ -3,17 +3,22 @@ package com.hagag.LoanManagementSystem.services;
 import com.hagag.LoanManagementSystem.DTOs.LoanHistoryResponseDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanResponseDTO;
+import com.hagag.LoanManagementSystem.DTOs.PaginationDTO;
 import com.hagag.LoanManagementSystem.daos.LoanHistoryRepository;
 import com.hagag.LoanManagementSystem.daos.LoanRepository;
 import com.hagag.LoanManagementSystem.daos.UserRepository;
 import com.hagag.LoanManagementSystem.entities.*;
 import com.hagag.LoanManagementSystem.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -97,35 +102,39 @@ public class LoanServices {
 
     }
 
-    public ResponseEntity<List<LoanResponseDTO>> getMyLoans(String status) {
+    public ResponseEntity<PaginationDTO<LoanResponseDTO>> getMyLoans(String status , Integer page , Integer size) {
         User user = getCurrentUser();
-
+        Pageable pageable = PageRequest.of(page, size);
         List<LoanResponseDTO> responseDTO = new ArrayList<>();
+        Page<Loan> loanPage;
 
         if(status == null || status.isBlank()) {
-            List<Loan> loans = loanRepository.findByUser(user);
-            for (Loan loan : loans) {
-                LoanResponseDTO dto = LoanResponseDTO.buildResponseFromLoan(loan);
-                responseDTO.add(dto);
+            loanPage = loanRepository.findByUser(user , pageable);
+        } else {
+            Status statusEnum;
+            try {
+                statusEnum = Status.valueOf(status.toUpperCase().trim());
+            } catch (IllegalArgumentException e) {
+                throw new InvalidInput("Invalid status. Allowed values: PENDING, APPROVED, REJECTED");
             }
-            return ResponseEntity.ok(responseDTO);
+            loanPage = loanRepository.findByUserAndStatus(user , statusEnum , pageable);
         }
-        Status statusEnum;
-        try {
-            statusEnum = Status.valueOf(status.toUpperCase().trim());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidInput("Invalid status. Allowed values: PENDING, APPROVED, REJECTED");
-        }
-
-        List<Loan> loans = loanRepository.findByUserAndStatus(user , statusEnum);
+        List<Loan> loans = loanPage.getContent();
 
         for(Loan loan : loans) {
             LoanResponseDTO dto = LoanResponseDTO.buildResponseFromLoan(loan);
             responseDTO.add(dto);
         }
-        return ResponseEntity.ok(responseDTO);
-    }
+        PaginationDTO<LoanResponseDTO> paginationDTO = new PaginationDTO<>();
 
+        paginationDTO.setData(responseDTO);
+        paginationDTO.setCurrentPage(loanPage.getNumber());
+        paginationDTO.setTotalPages(loanPage.getTotalPages());
+        paginationDTO.setTotalElements(loanPage.getTotalElements());
+        paginationDTO.setPageSize(loanPage.getSize());
+
+        return ResponseEntity.ok(paginationDTO);
+    }
 
     public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
         User user = getCurrentUser();
