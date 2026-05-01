@@ -3,6 +3,7 @@ package com.hagag.LoanManagementSystem.controllers;
 import com.hagag.LoanManagementSystem.DTOs.LoanHistoryResponseDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanResponseDTO;
+import com.hagag.LoanManagementSystem.DTOs.PaginationDTO;
 import com.hagag.LoanManagementSystem.services.LoanServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +35,9 @@ public class LoanController {
         return loanServices.rejectLoan(loanId);
     }
     @GetMapping("/myloans")
-    public ResponseEntity<List<LoanResponseDTO>> getMyLoans(@RequestParam(required = false) String status ,
-                                                            @RequestParam(defaultValue = "0") Integer page ,
-                                                            @RequestParam(defaultValue = "5") Integer size) {
+    public ResponseEntity<PaginationDTO<LoanResponseDTO>> getMyLoans(@RequestParam(required = false) String status ,
+                                                                     @RequestParam(defaultValue = "0") Integer page ,
+                                                                     @RequestParam(defaultValue = "5") Integer size) {
         return loanServices.getMyLoans(status , page , size);
     }
     @GetMapping("/loan/{loanId}")
