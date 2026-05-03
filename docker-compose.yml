@@ -5,22 +5,25 @@ services:
       - "8080:8080"
     networks:
       - backend-network
+    environment:
+        DB_URL: jdbc:postgresql://postgres:5432/LoanDB
+        DB_USER: postgres
+        DB_PASS: 2202295
     depends_on:
       - postgres
 
   postgres:
     image: postgres:14.22-trixie
     environment:
-      POSTGRES_DB: LoanDB
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 2202295
+      POSTGRES_DB: LoanDB
     ports:
       - 5430:5432
     volumes:
       - DB-volume:/var/lib/postgresql/data
     networks:
       - backend-network
-
 
 
 networks:
