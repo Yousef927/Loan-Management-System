@@ -1,0 +1,30 @@
+services:
+  my-app:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14.22-trixie
+    environment:
+      POSTGRES_DB: LoanDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2202295
+    ports:
+      - 5430:5432
+    volumes:
+      - DB-volume:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+
+
+networks:
+  backend-network:
+
+volumes:
+  DB-volume:
