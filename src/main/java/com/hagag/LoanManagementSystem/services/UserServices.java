@@ -36,4 +36,22 @@ public class UserServices {
 
 
     }
+
+    public ResponseEntity<UserResponseDTO> registerOfficer(UserRequestDTO userRequest) {
+        User newUser = new User();
+
+        newUser.setName(userRequest.getName());
+        newUser.setEmail(userRequest.getEmail());
+        newUser.setPassword(encoder.encode(userRequest.getPassword()));
+        newUser.setRole(Role.LOAN_OFFICER);
+
+        userRepository.save(newUser);
+
+        UserResponseDTO responseDTO = UserResponseDTO.buildResponseFromUser(newUser);
+
+        return new ResponseEntity<>(responseDTO , HttpStatus.CREATED);
+
+
+
+    }
 }
