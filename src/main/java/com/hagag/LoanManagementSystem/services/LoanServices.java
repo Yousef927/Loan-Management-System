@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -102,9 +103,10 @@ public class LoanServices {
 
     }
 
-    public ResponseEntity<PaginationDTO<LoanResponseDTO>> getMyLoans(String status , Integer page , Integer size) {
+    public ResponseEntity<PaginationDTO<LoanResponseDTO>> getMyLoans(String status , Integer page , Integer size , String sortBy) {
         User user = getCurrentUser();
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sortObj = Sort.by("amount").ascending();
+        Pageable pageable = PageRequest.of(page, size , sortObj);
         List<LoanResponseDTO> responseDTO = new ArrayList<>();
         Page<Loan> loanPage;
 
