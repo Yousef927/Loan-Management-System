@@ -6,6 +6,7 @@ import com.hagag.LoanManagementSystem.DTOs.LoanResponseDTO;
 import com.hagag.LoanManagementSystem.DTOs.PaginationDTO;
 import com.hagag.LoanManagementSystem.services.LoanServices;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -34,16 +35,19 @@ public class LoanController {
     public ResponseEntity<String> rejectLoan(@PathVariable Integer loanId) {
         return loanServices.rejectLoan(loanId);
     }
+
     @GetMapping("/myloans")
     public ResponseEntity<PaginationDTO<LoanResponseDTO>> getMyLoans(@RequestParam(required = false) String status ,
                                                                      @RequestParam(defaultValue = "0") Integer page ,
-                                                                     @RequestParam(defaultValue = "5") Integer size) {
-        return loanServices.getMyLoans(status , page , size);
+                                                                     @RequestParam(defaultValue = "5") Integer size ,
+                                                                     @RequestParam(required = false) String sortBy) {
+        return loanServices.getMyLoans(status , page , size , sortBy);
     }
     @GetMapping("/loan/{loanId}")
     public ResponseEntity<LoanResponseDTO> getLoan(@PathVariable Integer loanId) {
         return loanServices.getLoan(loanId);
     }
+
     @GetMapping("loan/{loanId}/history")
     public ResponseEntity<List<LoanHistoryResponseDTO>> getLoanHistory(@PathVariable Integer loanId) {
         return loanServices.getLoanHistory(loanId);
