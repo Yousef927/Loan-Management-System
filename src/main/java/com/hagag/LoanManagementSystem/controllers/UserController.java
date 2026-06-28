@@ -1,9 +1,11 @@
 package com.hagag.LoanManagementSystem.controllers;
 
 
+import com.hagag.LoanManagementSystem.DTOs.LoginRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.UserRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.UserResponseDTO;
 import com.hagag.LoanManagementSystem.entities.User;
+import com.hagag.LoanManagementSystem.services.JwtService;
 import com.hagag.LoanManagementSystem.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ public class UserController {
     @Autowired
     UserServices userServices;
 
+    @Autowired
+    JwtService jwtService;
+
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO user) {
         return userServices.registerUser(user);
@@ -27,5 +32,10 @@ public class UserController {
     @PostMapping("/register-officer")
     public ResponseEntity<UserResponseDTO> registerOfficer(@RequestBody UserRequestDTO user) {
         return userServices.registerOfficer(user);
+    }
+
+    @PostMapping("/login")
+    public String loginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
+        return userServices.verifyLogin(loginRequestDTO);
     }
 }
