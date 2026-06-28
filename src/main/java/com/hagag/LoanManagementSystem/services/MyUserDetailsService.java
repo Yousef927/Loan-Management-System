@@ -3,6 +3,7 @@ package com.hagag.LoanManagementSystem.services;
 import com.hagag.LoanManagementSystem.daos.UserRepository;
 import com.hagag.LoanManagementSystem.entities.CustomUserDetails;
 import com.hagag.LoanManagementSystem.entities.User;
+import com.hagag.LoanManagementSystem.exception.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,7 +20,7 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UserNotFound("User not found");
         }
         return new CustomUserDetails(user);
     }
