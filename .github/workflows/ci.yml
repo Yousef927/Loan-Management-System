@@ -4,7 +4,22 @@ on:
 
 jobs:
   build:
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_EXPIRATION_MS: ${{ secrets.JWT_EXPIRATION_MS }}
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14.22-trixie
+        env:
+          POSTGRES_DB: loan-system
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 2202295
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4   # this line means "clone my repository"
       - uses: actions/setup-java@v4 # this line = "sudo apt install java"
