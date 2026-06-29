@@ -1,0 +1,14 @@
+name: CI
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4   # this line means "clone my repository"
+      - uses: actions/setup-java@v4 # this line = "sudo apt install java"
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: mvn clean verify
