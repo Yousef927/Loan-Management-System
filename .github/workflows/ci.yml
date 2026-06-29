@@ -20,6 +20,11 @@ jobs:
           POSTGRES_PASSWORD: 2202295
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d loan-system"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
       - uses: actions/checkout@v4   # this line means "clone my repository"
       - uses: actions/setup-java@v4 # this line = "sudo apt install java"
