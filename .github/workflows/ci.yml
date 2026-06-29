@@ -5,9 +5,9 @@ on:
 jobs:
   build:
     env:
-      DB_URL: jdbc:postgresql://localhost:5432/loan-system
-      DB_USER: postgres
-      DB_PASS: 2202295
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       JWT_EXPIRATION_MS: ${{ secrets.JWT_EXPIRATION_MS }}
     runs-on: ubuntu-latest
