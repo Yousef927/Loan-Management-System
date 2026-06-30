@@ -26,6 +26,9 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - name: Check PostgreSQL service
+        run: |
+          getent hosts postgres
       - run: mvn clean verify
       - run: |
           echo "DB_URL=$DB_URL"
