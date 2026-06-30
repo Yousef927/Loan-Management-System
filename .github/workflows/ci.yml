@@ -28,9 +28,9 @@ jobs:
           java-version: 21
       - name: Show Docker containers
         run: docker ps -a
-      - name: Check PostgreSQL service
+      - name: Print DB_URL
         run: |
-          getent hosts postgres
+          echo "$DB_URL"
       - run: mvn clean verify
       - run: |
           echo "DB_URL=$DB_URL"
