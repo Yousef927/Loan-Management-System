@@ -23,7 +23,7 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 10s
-          --health-timeout 5s
+          --health-timeout 6s
           --health-retries 5
     steps:
       - uses: actions/checkout@v4   # this line means "clone my repository"
