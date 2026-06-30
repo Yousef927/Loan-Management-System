@@ -6,14 +6,14 @@ jobs:
   build:
     env:
       DB_URL: ${{ secrets.DB_URL }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       JWT_EXPIRATION_MS: ${{ secrets.JWT_EXPIRATION_MS }}
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:14.22-trixie
+        image: postgres:16
         env:
           POSTGRES_DB: loan-system
           POSTGRES_USER: postgres
@@ -27,3 +27,6 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: mvn clean verify
+      - run: |
+          echo "DB_URL=$DB_URL"
+          echo "DB_USER=$DB_USER"
