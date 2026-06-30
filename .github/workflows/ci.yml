@@ -26,6 +26,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - name: Show Docker containers
+        run: docker ps -a
       - name: Check PostgreSQL service
         run: |
           getent hosts postgres
