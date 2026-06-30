@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:14.22-trixie
+        image: postgres:16
         env:
           POSTGRES_DB: loan-system
           POSTGRES_USER: postgres
