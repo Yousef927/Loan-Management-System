@@ -28,6 +28,8 @@ jobs:
           java-version: 21
       - name: Show Docker containers
         run: docker ps -a
+      - name: Show environment
+        run: env | sort
       - name: Print DB_URL
         run: |
           echo "$DB_URL"
