@@ -20,19 +20,17 @@ jobs:
           POSTGRES_PASSWORD: 2202295
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4   # this line means "clone my repository"
       - uses: actions/setup-java@v4 # this line = "sudo apt install java"
         with:
           distribution: temurin
           java-version: 21
-      - name: Show Docker containers
-        run: docker ps -a
-      - name: Show environment
-        run: env | sort
-      - name: Print DB_URL
-        run: |
-          echo "$DB_URL"
       - run: mvn clean verify
       - run: |
           echo "DB_URL=$DB_URL"
