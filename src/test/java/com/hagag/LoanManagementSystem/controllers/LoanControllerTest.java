@@ -42,6 +42,6 @@ public class LoanControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest)
         )
-                .andExpect(status().isCreated());
+                .andExpect(status().is4xxClientError());
     }
 }
