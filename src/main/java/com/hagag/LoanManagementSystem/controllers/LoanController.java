@@ -5,6 +5,7 @@ import com.hagag.LoanManagementSystem.DTOs.LoanRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.LoanResponseDTO;
 import com.hagag.LoanManagementSystem.DTOs.PaginationDTO;
 import com.hagag.LoanManagementSystem.services.LoanServices;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class LoanController {
     LoanServices loanServices;
 
     @PostMapping("/apply")
-    public ResponseEntity<LoanResponseDTO> applyLoan(@RequestBody LoanRequestDTO loanRequestDTO) {
+    public ResponseEntity<LoanResponseDTO> applyLoan(@Valid @RequestBody LoanRequestDTO loanRequestDTO) {
 
         return loanServices.applyLoan(loanRequestDTO);
     }
