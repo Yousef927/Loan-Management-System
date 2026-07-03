@@ -30,7 +30,7 @@
 - POST /api/users/register
 - POST /api/users/register-officer
  
-### USER APIs:
+### LOANS APIs:
 - POST /api/loans/apply
 - POST /api/loans/{id}/approve
 - POST /api/loans/{id}/reject
@@ -38,10 +38,13 @@
 - GET /loan/{id}/history
 
 # 6- Authentication
-- This API uses HTTP Basic Authentication
+- This API uses JWT (JSON Web Token) authentication.
+- Users authenticate by logging in with their credentials and receive a JWT access token.
 - Users register via /api/users/register (default role: USER)
-- Loan officers are created via /api/users/register-officer endpoint
-- Loan officers can approve/reject loans
+- Loan officers are created via "/api/users/register-officer endpoint"
+- Role-based authorization is enforced:
+  - `USER` can submit and view their own loan/loans Details .
+  - `LOAN_OFFICER` can review, approve, or reject loan.
   
 ### 6.1- To access protected endpoints 
 - include your credentials (email and password) in each request.
@@ -60,6 +63,5 @@
 - Pagination implemented using Spring Data Page
 
 # 8- Future Plans
-- Replace Basic Auth with JWT authentication
 - Add unit and integration tests
 - Add role-based admin dashboard
