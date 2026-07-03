@@ -47,16 +47,15 @@
   - `LOAN_OFFICER` can review, approve, or reject loan.
   
 ### 6.1- To access protected endpoints 
-- include your credentials (email and password) in each request.
+- include your JWT (JSON Web Token) in each request.
 - Example using Postman:
 - Select Authorization
-- Choose Basic Auth
+- Choose Bearer Token
 - Enter :
-- Username: your email
-- Password: your password (encoded using Bcrypt)
+- Token : the Token you just received
 
 # 7- Design Highlights
-- can't access endpoints unless authenticated
+- can't access endpoints unless authenticated using JWT 
 - Clean separation using DTOs
 - Centralized exception handling
 - Audit logging using LoanHistory
