@@ -33,5 +33,4 @@ build/
 .vscode/
 
 # Ignore application properties file in the resources folder
-src/main/resources/application.properties
-
+.env
