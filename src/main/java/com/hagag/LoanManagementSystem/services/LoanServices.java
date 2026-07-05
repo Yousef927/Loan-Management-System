@@ -10,6 +10,7 @@ import com.hagag.LoanManagementSystem.daos.UserRepository;
 import com.hagag.LoanManagementSystem.entities.*;
 import com.hagag.LoanManagementSystem.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +37,9 @@ public class LoanServices {
 
     @Autowired
     LoanHistoryRepository loanHistoryRepository;
+
+    @Autowired
+    CachedLoanServices cachedLoanServices;
 
 
 
@@ -138,11 +142,11 @@ public class LoanServices {
         return ResponseEntity.ok(paginationDTO);
     }
 
+
     public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
         User user = getCurrentUser();
 
-        Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new LoanNotFound("Loan not found"));
+        Loan loan = cachedLoanServices.getLoanById(loanId);
 
         if (user.getRole() == Role.USER) {
             if (!loan.getUser().getId().equals(user.getId())) {
