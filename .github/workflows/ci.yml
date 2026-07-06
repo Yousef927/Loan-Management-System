@@ -14,9 +14,6 @@ jobs:
     services:
       redis:
         image: redis:latest
-        env:
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
         ports:
           - 6379:6379
       postgres:
