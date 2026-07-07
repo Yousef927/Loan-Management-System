@@ -16,6 +16,7 @@
 - Spring Security
 - Spring Data JPA
 - PostgreSQL
+- Redis (In-Memory Cache)
 - Docker / Docker Compose
 
 # 4- How To Run
