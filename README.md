@@ -55,13 +55,17 @@
 - Enter :
 - Token : the Token you just received
 
-# 7- Design Highlights
+# 7- Testing using JUnit and mockmvc
+- added testing to LOAN controller
+- added testing to USER controller
+
+# 8- Design Highlights
 - can't access endpoints unless authenticated using JWT 
 - Clean separation using DTOs
 - Centralized exception handling
 - Audit logging using LoanHistory
 - Pagination implemented using Spring Data Page
 
-# 8- Future Plans
+# 9- Future Plans
 - Add unit and integration tests
 - Add role-based admin dashboard
