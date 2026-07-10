@@ -1,4 +1,5 @@
 services:
+
   my-app:
     build: .
     ports:
@@ -6,11 +7,22 @@ services:
     networks:
       - backend-network
     environment:
-        DB_URL: jdbc:postgresql://postgres:5432/LoanDB
+        SPRING_PROFILES_ACTIVE: docker
         DB_USER: postgres
         DB_PASS: 2202295
+        JWT_SECRET: ${JWT_SECRET}
+        JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
     depends_on:
       - postgres
+      - redis
+
+  redis:
+    image: redis:8
+    ports:
+      - "6380:6379"
+    networks:
+      - backend-network
+
 
   postgres:
     image: postgres:14.22-trixie
