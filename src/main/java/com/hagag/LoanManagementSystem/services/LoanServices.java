@@ -159,8 +159,7 @@ public class LoanServices {
 
     public ResponseEntity<List<LoanHistoryResponseDTO>> getLoanHistory(Integer loanId) {
         User user = getCurrentUser();
-        Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new LoanNotFound("Loan not found"));
+        Loan loan = cachedLoanServices.getLoanById(loanId);
         if (user.getRole() == Role.USER) {
             if (!loan.getUser().getId().equals(user.getId())) {
                 throw new Forbidden("Unauthorized Access");
