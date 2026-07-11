@@ -10,11 +10,11 @@ import com.hagag.LoanManagementSystem.daos.UserRepository;
 import com.hagag.LoanManagementSystem.entities.*;
 import com.hagag.LoanManagementSystem.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,6 +30,9 @@ import java.util.List;
 public class LoanServices {
 
     @Autowired
+    private RedisConnectionFactory connectionFactory;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -39,7 +42,7 @@ public class LoanServices {
     LoanHistoryRepository loanHistoryRepository;
 
     @Autowired
-    CachedLoanServices cachedLoanServices;
+    CachedLoanServicesDTO cachedLoanServicesDTO;
 
 
 
@@ -144,7 +147,8 @@ public class LoanServices {
     public ResponseEntity<LoanResponseDTO> getLoan(Integer loanId) {
         User user = getCurrentUser();
 
-        Loan loan = cachedLoanServices.getLoanById(loanId);
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new LoanNotFound("Loan not found"));
 
         if (user.getRole() == Role.USER) {
             if (!loan.getUser().getId().equals(user.getId())) {
@@ -163,12 +167,8 @@ public class LoanServices {
                 throw new Forbidden("Unauthorized Access");
             }
         }
-        List<LoanHistoryResponseDTO> responseDTO = new ArrayList<>();
-        List<LoanHistory> loanHistories = loanHistoryRepository.findByLoanId(loanId);
-        for (LoanHistory loanHistory : loanHistories) {
-            LoanHistoryResponseDTO dto = LoanHistoryResponseDTO.buildResponseFromHistory(loanHistory);
-            responseDTO.add(dto);
-        }
+        List<LoanHistoryResponseDTO> responseDTO = cachedLoanServicesDTO.getCachedLoanDTO(loanId);
+
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -180,5 +180,9 @@ public class LoanServices {
             throw new UserNotFound("User not found");
         }
         return user;
+    }
+
+    public void flushAllRedisData() {
+        connectionFactory.getConnection().flushDb();
     }
 }
