@@ -23,7 +23,6 @@ services:
     networks:
       - backend-network
 
-
   postgres:
     image: postgres:14.22-trixie
     environment:
@@ -36,7 +35,6 @@ services:
       - DB-volume:/var/lib/postgresql/data
     networks:
       - backend-network
-
 
 networks:
   backend-network:
