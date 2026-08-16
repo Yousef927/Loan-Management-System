@@ -174,7 +174,6 @@ public class LoanServices {
 
         return ResponseEntity.ok(responseDTO);
     }
-
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
