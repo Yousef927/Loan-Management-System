@@ -61,8 +61,7 @@ public class UserServices {
 
         return new ResponseEntity<>(responseDTO , HttpStatus.CREATED);
 
-
-
+        
     }
 
     public String verifyLogin(LoginRequestDTO loginRequestDTO) {
