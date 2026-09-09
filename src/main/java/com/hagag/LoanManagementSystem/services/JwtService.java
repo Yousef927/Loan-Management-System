@@ -1,7 +1,6 @@
 package com.hagag.LoanManagementSystem.services;
 
 import com.hagag.LoanManagementSystem.daos.UserRepository;
-import com.hagag.LoanManagementSystem.exception.UserNotFound;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
