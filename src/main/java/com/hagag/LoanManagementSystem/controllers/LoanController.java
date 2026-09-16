@@ -7,9 +7,7 @@ import com.hagag.LoanManagementSystem.DTOs.PaginationDTO;
 import com.hagag.LoanManagementSystem.services.LoanServices;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
