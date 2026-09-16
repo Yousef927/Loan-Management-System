@@ -4,7 +4,6 @@ package com.hagag.LoanManagementSystem.controllers;
 import com.hagag.LoanManagementSystem.DTOs.LoginRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.UserRequestDTO;
 import com.hagag.LoanManagementSystem.DTOs.UserResponseDTO;
-import com.hagag.LoanManagementSystem.entities.User;
 import com.hagag.LoanManagementSystem.services.JwtService;
 import com.hagag.LoanManagementSystem.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
